@@ -1,53 +1,91 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+// Filename: index.js
+// Combined code from all files
 
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, StyleSheet, Text, ScrollView, ActivityIndicator, View, FlatList, Image } from 'react-native';
+
+// Combined content of App.js
 const App = () => {
-  const fullText = 'Hi, this is Apply.\nCreating mobile apps is now as simple as typing text.\nJust input your idea and press APPLY, and our platform does the rest...';
-  const [displayedText, setDisplayedText] = useState('');
-  const [index, setIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-
-  useEffect(() => {
-    if (isPaused) return;
-
-    const interval = setInterval(() => {
-      setDisplayedText((prev) => prev + fullText[index]);
-      setIndex((prev) => {
-        if (prev === fullText.length - 1) {
-          setIsPaused(true);
-          setTimeout(() => {
-            setDisplayedText('');
-            setIndex(0);
-            setIsPaused(false);
-          }, 2000);
-          return 0;
-        }
-        return prev + 1;
-      });
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, [index, isPaused]);
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>{displayedText}</Text>
-    </View>
-  );
+    return (
+        <SafeAreaView style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollView}>
+                <Text style={styles.title}>Picsum Photos</Text>
+                <ImageList />
+            </ScrollView>
+        </SafeAreaView>
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: 'black',
-    padding: 20,
-  },
-  text: {
-    color: 'white',
-    fontSize: 24,
-    fontFamily: 'monospace',
-  },
+    container: {
+        flex: 1,
+        marginTop: 20, // Avoid overlapping with status bar
+    },
+    scrollView: {
+        alignItems: 'center',
+        paddingHorizontal: 10,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginVertical: 20,
+    },
+});
+
+// Combined content of ImageList.js
+const images = [
+    { id: '1', width: 200, height: 200 },
+    { id: '2', width: 200, height: 200 },
+    { id: '3', width: 200, height: 200 },
+    { id: '4', width: 200, height: 200 },
+    { id: '5', width: 200, height: 200 },
+];
+
+const ImageList = () => {
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        // Simulate a network request
+        setTimeout(() => {
+            setLoading(false);
+        }, 2000);
+    }, []);
+
+    const renderItem = ({ item }) => (
+        <View style={imageStyles.imageContainer}>
+            <Image
+                source={{ uri: `https://picsum.photos/${item.width}/${item.height}?random=${item.id}` }}
+                style={imageStyles.image}
+            />
+        </View>
+    );
+
+    if (loading) {
+        return <ActivityIndicator size="large" color="#0000ff" />;
+    }
+
+    return (
+        <FlatList
+            data={images}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={imageStyles.list}
+        />
+    );
+};
+
+const imageStyles = StyleSheet.create({
+    list: {
+        alignItems: 'center',
+    },
+    imageContainer: {
+        margin: 10,
+    },
+    image: {
+        width: 200,
+        height: 200,
+        borderRadius: 10,
+    },
 });
 
 export default App;
